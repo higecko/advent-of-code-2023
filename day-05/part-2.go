@@ -91,17 +91,18 @@ func main() {
 
 	}
 
-	for key, _ := range(maps) {
+	for key := range(maps) {
 		slices.SortFunc(maps[key], func(a, b MapEntry) int {
 			return cmp.Compare(a.sourceRangeStart, b.sourceRangeStart)
 		})
+		slices.Reverse(maps[key])
 	}
 
 	minLocation := uint64(math.MaxUint64)
-	timeStart := time.Now()
 	for seedGroup := 0; seedGroup < len(seeds); seedGroup += 2 {
 		start := seeds[seedGroup]
 		end := start + seeds[seedGroup + 1]
+		timeStart := time.Now()
 		for seedNumber := start; seedNumber < end; seedNumber++ {
 			seed := seedNumber
 
@@ -114,26 +115,10 @@ func main() {
 					if mapEntry.sourceRangeStart <= seed  {
 						rangeMapEntry = mapEntry
 						rangeMapEntryFound = true
+						break
 					}
 				}
 				
-				// for i, j := 0, len(maps[mapName]) - 1; i < j; i, j = i + 1, j - 1  {
-				// 	if maps[mapName][j].sourceRangeStart <= seed {
-				// 		rangeMapEntry = maps[mapName][j]
-				// 		rangeMapEntryFound = true
-				// 		break
-				// 	}
-
-				// 	if maps[mapName][i].sourceRangeStart > seed {
-				// 		break
-				// 	}
-
-				// 	rangeMapEntry = maps[mapName][i]
-				// 	rangeMapEntryFound = true
-				// }
-
-
-
 				
 
 				if rangeMapEntryFound && rangeMapEntry.sourceRangeEnd > seed{
@@ -145,11 +130,11 @@ func main() {
 			minLocation = min(seed, minLocation)
 			// break
 		}
-
-		break
+		timeEnd := time.Now()
+		fmt.Println("finished", seeds[seedGroup + 1], timeEnd.Sub(timeStart).String())
+		// break
 	}
-	timeEnd := time.Now()
-	fmt.Println("finised in ", timeEnd.Sub(timeStart).String())
+	
 	fmt.Println(minLocation)
 	fmt.Println("done")
 }
